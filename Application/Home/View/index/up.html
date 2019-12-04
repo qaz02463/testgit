@@ -1,0 +1,143 @@
+<script type="text/javascript" src="__PUBLIC__/jquery-1.7.1.min.js"></script>
+<!--文件上传-->
+ <form id="uploadForm" enctype="multipart/form-data">
+ <div class="row" style="margin-top: 20px;">
+  <div class="form-group col-md-12" id="file">   
+   <input type="hidden" name="_csrf-application" value="<?= $csrf ?>">
+   <div class="form-group field-uploadform-excelfiles" style="margin-left: 30px;">
+    <label class="control-label btn btn-primary" for="uploadform-excelfiles">选择文件</label>
+    <input type="file" id="uploadform-excelfiles" name="UploadForm[excelFiles][]" multiple class="attachment-upload" accept=".jpg">
+    <input type="button" id="fileUpload" value="上传文件" class="btn btn-success" style="margin-left: 15px;">
+    <div class="help-block"></div>
+    <div id="fileName"></div>
+   </div>
+  </div>
+ </div>
+ <table role="presentation" class="table"><tbody id="files"></tbody></table> 
+</form>
+
+
+<script>
+var fileList;
+var allFile = [];
+//FormData对象初始化
+var form = document.getElementById("upload-form");
+var formData = new FormData(form);
+$("#uploadform-excelfiles").on('change', function (e) {
+ //获取表单数据并传入formData中
+ var norm = $("#norm").val();
+ var major = $("#major").val();
+ var type = $("#type").val();
+ formData.set("norm",norm);
+ formData.set("major",major);
+ formData.set("type",type);
+ 
+ var fileError = 0;
+ fileList = e.currentTarget.files;
+ $.each(fileList, function (index, item) {
+  var fileName = item.name;
+  var fileEnd = fileName.substring(fileName.indexOf("."));
+  //上传文件格式判断
+  if (fileEnd == ".jpg") {
+   allFile.push(item);
+   $('#files').append( '<tr style="padding-top: 7px;">' +
+        '<td>'+fileName+'</td>' +
+        '<td>'+(item.size / 1024).toFixed(2)+'K</td>' +
+        '<td><input type="button" class="btn btn-danger delete" value="删除"></td>' +
+        '</tr>');
+   //追加文件
+   formData.append('UploadForm[excelFiles][]',item);
+  } else {
+   fileError++;
+  }
+ });
+ if (fileError > 0) {
+  alert("只能上传 “.jpg” 格式的文件!");
+  document.getElementById("upload-form").reset();
+  return;
+ }
+ 
+ var fileCount = $('#files').find('tr').length;
+ $('#fileName').html('共上传 ' + fileCount + ' 个文件');
+ 
+});
+
+
+
+$('#files').on('click','.delete',function (e) {
+  var saveFile = [];
+  var norm = $("#norm").val();
+  var major = $("#major").val();
+  var type = $("#type").val();
+  var deleteName = e.target.parentNode.previousElementSibling.previousElementSibling.textContent;
+  var deleteIndex;
+  //将不删除的放入数组中
+  $.each(allFile,function (index, item) {
+   if(item.name == deleteName){
+     deleteIndex = index;
+   }else {
+    saveFile.push(item);
+   }
+  });
+  allFile.splice(deleteIndex,1);
+  //表单数据重置
+  formData.set("norm",norm);
+  formData.set("major",major);
+  formData.set("type",type);
+  formData.delete('UploadForm[excelFiles][]');
+  //将不删除的数组追加的formData中
+  $.each(saveFile,function (index, item) {
+   formData.append('UploadForm[excelFiles][]',item);
+  });
+ 
+  e.target.parentNode.parentNode.remove();
+  var fileCount = $('#files').find('tr').length;
+  $('#fileName').html('共上传 ' + fileCount + ' 个文件');
+ 
+ });
+
+$("#fileUpload").on('click',function () {
+  var len = formData.getAll('UploadForm[excelFiles][]').length;
+console.log(len)
+  $("#overlay").show();
+  if(len > 1){
+    var deleteBtn = $(".delete");
+    //通过ajax进行上传
+    $.ajax({
+     url: 'http://localhost/tp/index.php/Home/index/up',
+     type: 'POST',
+     cache: false,
+     data: formData,
+     processData: false,
+     contentType: false
+    }).done(function(res) {
+  console.log(res)
+     if(res.code == 'ok'){
+      //进度条设置
+      var value = 0;
+      var timer2 = setInterval(function () {
+       value ++;
+       $("#progress").css('width', value + "%");
+       if (value == 120) {
+        clearInterval(timer2);
+        $("#overlay").hide();
+        alert("文件上传成功!");
+       }
+      }, 50);
+     //删除对应按钮
+     $("#fileUpload").css("display","none");
+     $.each(deleteBtn,function (index, item) {
+      $(item).css("display","none");
+     });
+     $('#files').append('<tr><td><td><td><a type="button" class="btn btn-success pull-right" id="fileDown" href="/finalize/get-file?id=' + res.data.id + '" rel="external nofollow" >文件下载</a></td></tr>')
+    }
+ 
+   }).fail(function(res) {
+    alert("文件上传失败:" + res.msg);
+   });
+  }else {
+   alert("请选择需要上传的文件！");
+  }
+ 
+ });
+</script>

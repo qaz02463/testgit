@@ -1,0 +1,68 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>投保项目</title>
+	<script src="__PUBLIC__/jsmain.js" type="text/javascript"></script>
+</head>
+<body>
+	<form action="" method="post">
+		<div>车险投保（保项）</div>
+		<div><input type="checkbox" name='ck1' value='1' id='ck1'>交强险+车船税</div>
+		<div>商业险：</div>
+		<div><input type="checkbox" name='ck2' value='1' id='ck2'>第三者责任保险</div>
+		<div id='ck21' style='display:none'>&nbsp;&nbsp;
+			<input type="radio" name='ck21' value='1' checked>5W
+			<input type="radio" name='ck21' value='2'>10W
+			<input type="radio" name='ck21' value='3'>15W
+			<input type="radio" name='ck21' value='4'>20W
+		</div>
+		<div><input type="checkbox" name='ck3' value='1' id='ck3'>机动车损失险</div>
+		<div id='ck31' style='display: none'>
+			<div>&nbsp;&nbsp;<input type="checkbox" name='ck31' value='1'>玻璃单独破碎险（没有不计免赔）</div>
+			<div>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name='ck311' value='1' checked>国产
+				<input type="radio" name='ck311' value='2'>进口</div>
+			<div>&nbsp;&nbsp;<input type="checkbox" name='ck32' value='1'>自燃损失险</div>
+			<div>&nbsp;&nbsp;<input type="checkbox" name='ck33' value='1'>车身划痕损失险</div>
+			<div>&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name='ck331' value='1' checked>2000
+				<input type="radio" name='ck331' value='2'>5000</div>
+			<div>&nbsp;&nbsp;<input type="checkbox" name='ck34' value='1'>发动机涉水损失险</div>
+			<div>&nbsp;&nbsp;<input type="checkbox" name='ck35' value='1'>机动车损失保险无法找到第三方特约险（没有不计免赔）</div>
+			<div>&nbsp;&nbsp;<input type="checkbox" name='ck36' value='1'>指定修理厂险</div>
+		</div>
+		<div><input type="checkbox" name='ck4' value='1'>车上人员责任保险（司机）<input type="text" name='ck41'>(1-10W)</div>
+		<div><input type="checkbox" name='ck5' value='1'>车上人员责任保险（乘客）<input type="text" name='ck51'>(1-10W)</div>
+		<div><input type="checkbox" name='ck6' value='1'>全车盗抢保险</div>
+		<button>提交</button>
+	</form>
+</body>
+<script>
+$('#ck2').click(function(){
+	if ($(this).attr("checked")) {
+		$('#ck21').css('display','block')
+	} else {
+		$('#ck21').css('display','none')
+	}
+})
+$('#ck3').click(function(){
+	if ($(this).attr("checked")) {
+		$('#ck31').css('display','block')
+	} else {
+		$('#ck31').css('display','none')
+	}
+})
+</script>
+</html>
+<!-- 车险投保（保项）：
+    √ 交强险+车船税
+    商业险：
+        √第三者责任保险（5，10，15，20，30，50，100，150，200，300万）
+        √机动车损失险
+            √玻璃单独破碎险（没有不计免赔）（国产/进口）
+            √自燃损失险
+            √车身划痕损失险（2000/5000）
+            √发动机涉水损失险
+            √机动车损失保险无法找到第三方特约险（没有不计免赔）
+            √指定修理厂险
+        √车上人员责任保险（司机）（1-10万）
+        √车上人员责任保险（乘客）（1-10万）
+        √全车盗抢保险 -->

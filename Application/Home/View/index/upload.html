@@ -1,0 +1,35 @@
+<script type="text/javascript" src="__PUBLIC__/jquery-1.7.1.min.js"></script>
+<!--文件上传-->
+ <form id="uploadForm"  method="post" action="">
+ <input type="text" id='card' name='card'>
+    <input type="file" title='card' multiple class="attachment-upload" accept="image/*" onchange="up(this);"><span></span>
+    <button>提交</button>
+</form>
+<div id='show'></div>
+<script>
+var formData = new FormData();
+function up(img){
+  var formData = new FormData();
+  var id=$(img).attr('title');
+  iimg = img.files[0];
+  $(img).next().html('上传中');
+  formData.append('file', iimg);
+  formData.append('sizeid',123);
+  $.ajax({
+    url: 'http://localhost/tp/index.php/Home/index/ajaximg',
+    type: 'POST',
+    cache: false,
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(r){
+      u=r.file;
+      $('#'+id).val(u);
+      $(img).next().html('上传完成');
+    },
+    error:function(){
+      alert('error')
+    }
+    })
+}
+</script>
